@@ -48,6 +48,8 @@ echo "        option forwardfor"                          >> /etc/haproxy/haprox
 echo "        option http-server-close"                   >> /etc/haproxy/haproxy.cfg
 echo "        server app1 10.0.2.2:9101 check inter 1000" >> /etc/haproxy/haproxy.cfg
 echo "        server app2 10.0.2.2:9102 check inter 1000" >> /etc/haproxy/haproxy.cfg
+echo "        server app3 10.0.2.2:9103 check inter 1000" >> /etc/haproxy/haproxy.cfg
+echo "        server app4 10.0.2.2:9104 check inter 1000" >> /etc/haproxy/haproxy.cfg
 echo "ENABLED=1" > /etc/default/haproxy
 service haproxy restart
 echo Done.
@@ -121,6 +123,32 @@ Vagrant.configure("2") do |config|
     app2.vm.network "forwarded_port", guest: 22,   host: 9112
     app2.vm.network "forwarded_port", guest: 9100, host: 9102
     app2.vm.provider "virtualbox" do |vm|
+      vm.customize [
+                     'modifyvm', :id,
+                     '--memory', '512'
+                 ]
+    end
+  end
+
+  config.vm.define "app3" do |app3|
+    app3.vm.hostname = "cdzd-app3"
+    app3.vm.provision :shell, :inline => $script_app
+    app3.vm.network "forwarded_port", guest: 22,   host: 9113
+    app3.vm.network "forwarded_port", guest: 9100, host: 9103
+    app3.vm.provider "virtualbox" do |vm|
+      vm.customize [
+                     'modifyvm', :id,
+                     '--memory', '512'
+                 ]
+    end
+  end
+
+  config.vm.define "app4" do |app4|
+    app4.vm.hostname = "cdzd-app4"
+    app4.vm.provision :shell, :inline => $script_app
+    app4.vm.network "forwarded_port", guest: 22,   host: 9114
+    app4.vm.network "forwarded_port", guest: 9100, host: 9104
+    app4.vm.provider "virtualbox" do |vm|
       vm.customize [
                      'modifyvm', :id,
                      '--memory', '512'
